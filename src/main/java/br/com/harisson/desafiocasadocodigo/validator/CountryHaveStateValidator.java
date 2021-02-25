@@ -13,16 +13,14 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CountryHaveStateValidator implements ConstraintValidator<CountryHaveState, Object> {
+public class CountryHaveStateValidator implements ConstraintValidator<CountryHaveState, CustomerPostRequestBody> {
 
     @Autowired
     private CountryRepository countryRepository;
 
     @Override
-    public boolean isValid(Object o, ConstraintValidatorContext constraintValidatorContext) {
-        CustomerPostRequestBody customerPostRequestBody = (CustomerPostRequestBody) o;
-
-        if (customerPostRequestBody.getCountryId() == null){
+    public boolean isValid(CustomerPostRequestBody customerPostRequestBody, ConstraintValidatorContext constraintValidatorContext) {
+        if (customerPostRequestBody.getCountryId() == null) {
             return false;
         }
 
@@ -33,14 +31,17 @@ public class CountryHaveStateValidator implements ConstraintValidator<CountryHav
 
         if (states.isEmpty()) {
             return customerPostRequestBody.getStateId() == null;
-        } else {
-            if (customerPostRequestBody.getStateId() == null) {
-                return false;
-            }
-            Long stateId = customerPostRequestBody.getStateId();
-            List<Long> collect = states.stream().map(State::getId).collect(Collectors.toList());
-            return collect.stream().anyMatch(l -> l.equals(stateId));
         }
+
+        if (customerPostRequestBody.getStateId() == null) {
+            return false;
+        }
+
+        Long stateId = customerPostRequestBody.getStateId();
+        List<Long> collect = states.stream().map(State::getId).collect(Collectors.toList());
+
+        return collect.stream().anyMatch(l -> l.equals(stateId));
+
 
     }
 }

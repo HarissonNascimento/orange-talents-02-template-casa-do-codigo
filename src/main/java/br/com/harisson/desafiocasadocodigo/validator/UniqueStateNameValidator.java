@@ -8,13 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class UniqueStateNameValidator implements ConstraintValidator<UniqueStateName, Object> {
+public class UniqueStateNameValidator implements ConstraintValidator<UniqueStateName, StatePostRequestBody> {
     @Autowired
     private CountryRepository countryRepository;
 
     @Override
-    public boolean isValid(Object o, ConstraintValidatorContext constraintValidatorContext) {
-        StatePostRequestBody statePostRequestBody = (StatePostRequestBody) o;
+    public boolean isValid(StatePostRequestBody statePostRequestBody, ConstraintValidatorContext constraintValidatorContext) {
         return !countryRepository.existsByIdAndStatesName(statePostRequestBody.getCountryId(), statePostRequestBody.getName());
     }
 }
